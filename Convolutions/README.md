@@ -1,7 +1,7 @@
 # Syllabus
 ## Image Histogram
 
-Histogram of an image provides the frequency of the brightness(intensity) value in the image.
+Histogram of an image provides `the frequency of the brightness(intensity) value` in the image.
 
 ```
 def histogram(im):
@@ -11,3 +11,14 @@ def histogram(im):
       val = im[row, col]
       h[val] += 1
 ```
+
+## Systems and Filters
+### Filtering
+Forming a new image whose pixel values are transformed from original pixel values.
+Goal is to extract useful information from images, or transform images into another domain where we can modify/enhance image properties.
+- Features (edges, corners, blobs…)
+- super-resolution; in-painting; de-noising
+
+###  linear shift invariant system
+
+## Convolution and correlation
