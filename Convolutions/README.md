@@ -20,5 +20,5 @@ Goal is to extract useful information from images, or transform images into anot
 - super-resolution; in-painting; de-noising
 
 ###  linear shift invariant system
-
+- Details in the CS131 slides.
 ## Convolution and correlation
