@@ -44,4 +44,4 @@ correlation result reaches a maximum at the time when the two signals match
 best. correlation is a measure of relatedness of two signals.
 
 # Code exercise
-- See the coding exercise.
+- See the `coding_exercise` folder.
