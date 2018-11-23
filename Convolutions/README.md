@@ -23,4 +23,8 @@ Goal is to extract useful information from images, or transform images into anot
 - Details in the CS131 slides.
 ## Convolution and correlation
 
-![convolution_operation](https://github.com/yinyuecheng1/Computer_Vision_Foundation/Convolutions/snapshot/convolution.png)
+### Convolution
+- X-flip the convolution filter.
+- Y-flip the convolution filter.
+- Innerproduct with the origin image.
+![convolution](https://github.com/yinyuecheng1/Computer_Vision_Foundation/Convolutions/snapshot/convolution.png)
