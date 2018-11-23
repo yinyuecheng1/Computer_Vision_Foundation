@@ -22,3 +22,5 @@ Goal is to extract useful information from images, or transform images into anot
 ###  linear shift invariant system
 - Details in the CS131 slides.
 ## Convolution and correlation
+
+![convolution operation](https://github.com/yinyuecheng1/Computer_Vision_Foundation/master/Convolutions/snapshot/convolution.png)
