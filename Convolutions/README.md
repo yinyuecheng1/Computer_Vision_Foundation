@@ -42,3 +42,7 @@ as it is shifted over another function. convolution is a filtering operation.
 measure of similarity of two input signals as they are shifted by one another. The
 correlation result reaches a maximum at the time when the two signals match
 best. correlation is a measure of relatedness of two signals.
+
+# Code exercise
+
+
