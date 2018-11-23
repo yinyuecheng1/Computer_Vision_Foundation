@@ -27,4 +27,4 @@ Goal is to extract useful information from images, or transform images into anot
 - X-flip the convolution filter.
 - Y-flip the convolution filter.
 - Innerproduct with the origin image.
-![convolution](https://github.com/yinyuecheng1/Computer_Vision_Foundation/Convolutions/master/snapshot/convolution.png)
+![convolution](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Convolutions/snapshot/convolution.png)
