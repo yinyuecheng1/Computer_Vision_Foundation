@@ -43,7 +43,7 @@
 - Straight lines that pass that point have the form yi= a*xi + b
 - Common to them is that they satisfy the equation for some set of parameters(a, b)
 
-### Detecting lines using Hough transform
+### Hough Transform Theory
 - Two points (x1, y1) and(x2 y2) define a line in the (x, y) plane.
 - These two points give rise to two different lines in (a,b) space.
 - In (a,b) space these lines will intersect in a point (a’ b’)
