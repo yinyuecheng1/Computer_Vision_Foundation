@@ -48,3 +48,8 @@
 - These two points give rise to two different lines in (a,b) space.
 - In (a,b) space these lines will intersect in a point (a’ b’)
 - All points on the line defined by (x1, y1) and (x2 , y2) in (x, y) space will parameterize lines that intersect in (a’, b’) in (a,b) space.
+
+### Algorithm for Hough transform
+- Quantize the parameter space (a b) by dividing it into cells
+- This quantized space is often referred to as the accumulator cells.
+- Count the number of times a line intersects a given cell
