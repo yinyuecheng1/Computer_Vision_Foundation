@@ -37,6 +37,8 @@
 - Assume that we have performed some edge detection, and a thresholding of the edge magnitude image.
 - Thus, we have some pixels that may partially describe the boundary of some objects.
 
+
+
 ### Detecting lines using Hough transform
 - We wish to find sets of pixels that make up straight lines.
 - Consider a point of known coordinates (xi;yi).There are many lines passing through the point (xi ,yi ).
@@ -53,3 +55,9 @@
 - Quantize the parameter space (a b) by dividing it into cells
 - This quantized space is often referred to as the accumulator cells.
 - Count the number of times a line intersects a given cell
+
+
+
+# Coding exercise
+## Canny edge detector implementation
+## Hough Transformation to fit a line
