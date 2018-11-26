@@ -138,7 +138,6 @@ The contributions of all the pixels in the 8×8 cells are added up to create the
 Now that we know how to normalize a vector, you may be tempted to think that while calculating HOG you can simply normalize the 9×1 histogram the same way we normalized the 3×1 vector above. It is not a bad idea, but a better idea is to normalize over a bigger sized block of 16×16. A 16×16 block has 4 histograms which can be concatenated to form a 36 x 1 element vector and it can be normalized just the way a 3×1 vector is normalized. The window is then moved by 8 pixels ( see animation ) and a normalized 36×1 vector is calculated over this window and the process is repeated.
 ![hog1](https://github.com/yinyuecheng1/interview-computer-vision/raw/master/Image/png/7_8.gif)
 
-interview-computer-vision/Image/png/
 
 ### Step 5 : Calculate the HOG feature vector
 To calculate the final feature vector for the entire image patch, the 36×1 vectors are concatenated into one giant vector. What is the size of this vector ? Let us calculate
