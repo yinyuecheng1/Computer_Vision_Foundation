@@ -30,7 +30,17 @@ cv2.imwrite('sift_keypoints.jpg',img)
 we worked with the scaled image from DoG)
 - We can compare each vector from image A to each vector from image B to find matching keypoints! Euclidean “distance” between descriptor vectors gives a good measure of keypoint similarity.
 
-[opencv implement]https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html
+[opencv implement](https://opencv-python-tutroals.readthedocs.io/en/latest/py_tutorials/py_feature2d/py_sift_intro/py_sift_intro.html)
 ## HOG: another image descriptor
+- Find robust feature set that allows object form to be discriminated.
+- Challenges
+-- Wide range of pose and large variations in appearances
+-- Cluttered backgrounds under different illumination
+-- “Speed” for mobile vision
+## Difference between HoG and SIFT
+- HoG is usually used to describe entire images. SIFT is used for key point matching.
+- SIFT histrograms are oriented towards the dominant gradient. HoG is not.
+- HoG gradients are normalized using neighborhood bins.
+- SIFT descriptors use varying scales to compute multiple descriptors
 # Coding exercise
 ## Application: Panorama
