@@ -47,6 +47,107 @@ In this section, we will go into the details of calculating the HOG feature desc
 #### Step 1 : Preprocessing
 As mentioned earlier HOG feature descriptor used for pedestrian detection is calculated on a 64×128 patch of an image. Of course, an image may be of any size. Typically patches at multiple scales are analyzed at many image locations. The only constraint is that the patches being analyzed have a fixed aspect ratio. In our case, the patches need to have an aspect ratio of 1:2. For example, they can be 100×200, 128×256, or 1000×2000 but not 101×205.
 
+To illustrate this point I have shown a large image of size 720×475. We have selected a patch of size 100×200 for calculating our HOG feature descriptor. This patch is cropped out of an image and resized to 64×128. Now we are ready to calculate the HOG descriptor for this image patch.
+
+![hog](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog.png)
+#### Step 2 : Calculate the Gradient Images
+To calculate a HOG descriptor, we need to first calculate the horizontal and vertical gradients; after all, we want to calculate the histogram of gradients. This is easily achieved by filtering the image with the following kernels.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog1.png)
+We can also achieve the same results, by using Sobel operator in OpenCV with kernel size 1.
+```
+// C++ gradient calculation. 
+// Read image
+Mat img = imread("bolt.png");
+img.convertTo(img, CV_32F, 1/255.0);
+ 
+// Calculate gradients gx, gy
+Mat gx, gy; 
+Sobel(img, gx, CV_32F, 1, 0, 1);
+Sobel(img, gy, CV_32F, 0, 1, 1);
+```
+```
+# Python gradient calculation 
+ 
+# Read image
+im = cv2.imread('bolt.png')
+im = np.float32(im) / 255.0
+ 
+# Calculate gradient 
+gx = cv2.Sobel(img, cv2.CV_32F, 1, 0, ksize=1)
+gy = cv2.Sobel(img, cv2.CV_32F, 0, 1, ksize=1)
+```
+Next, we can find the magnitude and direction of gradient using the following formula.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog2.png)
+
+If you are using OpenCV, the calculation can be done using the function cartToPolar as shown below.
+```
+// C++ Calculate gradient magnitude and direction (in degrees)
+Mat mag, angle; 
+cartToPolar(gx, gy, mag, angle, 1); 
+The same code in python looks like this.
+```
+```
+# Python Calculate gradient magnitude and direction ( in degrees ) 
+mag, angle = cv2.cartToPolar(gx, gy, angleInDegrees=True)
+The figure below shows the gradients.
+```
+The figure below shows the gradients.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog3.png)
+
+Notice, the x-gradient fires on vertical lines and the y-gradient fires on horizontal lines. The magnitude of gradient fires where ever there is a sharp change in intensity. None of them fire when the region is smooth. I have deliberately left out the image showing the direction of gradient because direction shown as an image does not convey much.
+
+The gradient image removed a lot of non-essential information ( e.g. constant colored background ), but highlighted outlines. In other words, you can look at the gradient image and still easily say there is a person in the picture.
+
+At every pixel, the gradient has a magnitude and a direction. For color images, the gradients of the three channels are evaluated ( as shown in the figure above ). The magnitude of gradient at a pixel is the maximum of the magnitude of gradients of the three channels, and the angle is the angle corresponding to the maximum gradient.
+
+#### Step 3 : Calculate Histogram of Gradients in 8×8 cells
+In this step, the image is divided into 8×8 cells and a histogram of gradients is calculated for each 8×8 cells.
+
+We will learn about the histograms in a moment, but before we go there let us first understand why we have divided the image into 8×8 cells. One of the important reasons to use a feature descriptor to describe a patch of an image is that it provides a compact representation. 
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog4.png)
+
+An 8×8 image patch contains 8x8x3 = 192 pixel values. The gradient of this patch contains 2 values ( magnitude and direction ) per pixel which adds up to 8x8x2 = 128 numbers. By the end of this section we will see how these 128 numbers are represented using a 9-bin histogram which can be stored as an array of 9 numbers. Not only is the representation more compact, calculating a histogram over a patch makes this represenation more robust to noise. Individual graidents may have noise, but a histogram over 8×8 patch makes the representation much less sensitive to noise.
+
+But why 8×8 patch ? Why not 32×32 ? It is a design choice informed by the scale of features we are looking for. HOG was used for pedestrian detection initially. 8×8 cells in a photo of a pedestrian scaled to 64×128 are big enough to capture interesting features ( e.g. the face, the top of the head etc. ).
+
+The histogram is essentially a vector ( or an array ) of 9 bins ( numbers ) corresponding to angles 0, 20, 40, 60 … 160.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog5.png)
+
+If you are a beginner in computer vision, the image in the center is very informative. It shows the patch of the image overlaid with arrows showing the gradient — the arrow shows the direction of gradient and its length shows the magnitude. Notice how the direction of arrows points to the direction of change in intensity and the magnitude shows how big the difference is.
+
+On the right, we see the raw numbers representing the gradients in the 8×8 cells with one minor difference — the angles are between 0 and 180 degrees instead of 0 to 360 degrees. These are called “unsigned” gradients because a gradient and it’s negative are represented by the same numbers. In other words, a gradient arrow and the one 180 degrees opposite to it are considered the same. But, why not use the 0 – 360 degrees ? Empirically it has been shown that unsigned gradients work better than signed gradients for pedestrian detection. Some implementations of HOG will allow you to specify if you want to use signed gradients.
+
+The next step is to create a histogram of gradients in these 8×8 cells. The histogram contains 9 bins corresponding to angles 0, 20, 40 … 160.
+
+The following figure illustrates the process. We are looking at magnitude and direction of the gradient of the same 8×8 patch as in the previous figure. A bin is selected based on the direction, and the vote ( the value that goes into the bin ) is selected based on the magnitude. Let’s first focus on the pixel encircled in blue. It has an angle ( direction ) of 80 degrees and magnitude of 2. So it adds 2 to the 5th bin. The gradient at the pixel encircled using red has an angle of 10 degrees and magnitude of 4. Since 10 degrees is half way between 0 and 20, the vote by the pixel splits evenly into the two bins.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog6.png)
+
+There is one more detail to be aware of. If the angle is greater than 160 degrees, it is between 160 and 180, and we know the angle wraps around making 0 and 180 equivalent. So in the example below, the pixel with angle 165 degrees contributes proportionally to the 0 degree bin and the 160 degree bin.
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog7.png)
+
+The contributions of all the pixels in the 8×8 cells are added up to create the 9-bin histogram. For the patch above, it looks like this
+
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog8.png)
+
+
+
+### Step 4 : 16×16 Block Normalization
+
+![hog1](https://github.com/yinyuecheng1/Computer_Vision_Foundation/raw/master/Feature_Descriptors/snapshot/hog9.png)
+
+Now that we know how to normalize a vector, you may be tempted to think that while calculating HOG you can simply normalize the 9×1 histogram the same way we normalized the 3×1 vector above. It is not a bad idea, but a better idea is to normalize over a bigger sized block of 16×16. A 16×16 block has 4 histograms which can be concatenated to form a 36 x 1 element vector and it can be normalized just the way a 3×1 vector is normalized. The window is then moved by 8 pixels ( see animation ) and a normalized 36×1 vector is calculated over this window and the process is repeated.
+![hog1](https://github.com/yinyuecheng1/interview-computer-vision/raw/master/Image/png/7_8.gif)
+
+interview-computer-vision/Image/png/
+
+### Step 5 : Calculate the HOG feature vector
+To calculate the final feature vector for the entire image patch, the 36×1 vectors are concatenated into one giant vector. What is the size of this vector ? Let us calculate
+
+- How many positions of the 16×16 blocks do we have ? There are 7 horizontal and 15 vertical positions making a total of 7 x 15 = 105 positions.
+- Each 16×16 block is represented by a 36×1 vector. So when we concatenate them all into one gaint vector we obtain a 36×105 = 3780 dimensional vector.
+
+
+
 
 
 - Find robust feature set that allows object form to be discriminated.
